@@ -306,7 +306,6 @@
   </main>
 </div>
 
-<script src="lessons.js"></script>
 <script>
 (function(){
   const c=document.getElementById('bg-canvas'), ctx=c.getContext('2d');
@@ -425,17 +424,63 @@
     return slot;
   }
 
-  const lessons = window.LESSONS;
-  if(!Array.isArray(lessons) || lessons.length===0){
-    const warn=el('div','page-slot');
-    const inner=el('div','slot-inner');
-    inner.appendChild(el('p','copy-en','Could not load the lesson content. Make sure "lessons.js" is saved in the same folder as this HTML file, then reload the page.'));
-    warn.appendChild(inner);
-    track.appendChild(warn);
-  } else {
-    lessons.forEach(lesson=> track.appendChild(buildSlot(lesson)));
+  function diagnosticMessage(result){
+    if(result.error==='not-found'){
+      return 'Could not find "lessons.js" (' + result.detail + '). Make sure it was uploaded to the same folder/deployment as this page.';
+    }
+    if(result.error==='html-fallback'){
+      return 'The server sent back the HTML page instead of "lessons.js" (likely a single-page-app / catch-all fallback route on your host). Check your Cloudflare Worker or Pages routing so .js files are served as static assets, not redirected to index.html.';
+    }
+    if(result.error==='parse-error'){
+      return 'Found "lessons.js" but it has a JavaScript error: ' + result.detail;
+    }
+    if(result.error==='no-lessons-array'){
+      return '"lessons.js" loaded but did not define a LESSONS array. Check that the file still has "const LESSONS = [ ... ];" in it.';
+    }
+    return 'Could not load the lesson content (' + (result.detail||result.error) + ').';
   }
 
+  async function loadLessons(){
+    let res;
+    try{
+      res = await fetch(new URL('lessons.js', document.baseURI).href, { cache:'no-store' });
+    }catch(e){
+      return { error:'network', detail:e.message };
+    }
+    if(!res.ok){
+      return { error:'not-found', detail:'HTTP '+res.status };
+    }
+    const text = await res.text();
+    const trimmed = text.trim().toLowerCase();
+    if(trimmed.startsWith('<!doctype') || trimmed.startsWith('<html')){
+      return { error:'html-fallback' };
+    }
+    try{
+      const factory = new Function(text + '\n;return (typeof LESSONS!=="undefined") ? LESSONS : null;');
+      const lessons = factory();
+      if(!Array.isArray(lessons) || lessons.length===0){
+        return { error:'no-lessons-array' };
+      }
+      return { lessons };
+    }catch(e){
+      return { error:'parse-error', detail:e.message };
+    }
+  }
+
+  loadLessons().then(result=>{
+    if(result.lessons){
+      result.lessons.forEach(lesson=> track.appendChild(buildSlot(lesson)));
+    } else {
+      const warn=el('div','page-slot');
+      const inner=el('div','slot-inner');
+      inner.appendChild(el('p','copy-en', diagnosticMessage(result)));
+      warn.appendChild(inner);
+      track.appendChild(warn);
+    }
+    initNav();
+  });
+
+  function initNav(){
   const slots=Array.from(document.querySelectorAll('.page-slot'));
   const n=slots.length;
   let idx=0;
@@ -498,6 +543,7 @@
   });
 
   renderTrack();
+  } // end initNav
 })();
 
 if ('serviceWorker' in navigator) {
