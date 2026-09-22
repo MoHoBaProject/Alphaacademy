@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AlphaAcademy</title>
+<meta name="description" content="Applied AI courses for finance — Python for Finance and more.">
+<meta name="theme-color" content="#05060F">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root{
+    --bg:#05060F;
+    --ink:#E9EBF6;
+    --ink-dim:#8D93AE;
+    --indigo:#6C6BF2;
+    --violet:#A98BFA;
+    --orange:#FF9A4D;
+    --line:rgba(255,255,255,.07);
+    --sans:"Inter","Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    --fa:"Vazirmatn","IRANSans","Segoe UI",Tahoma,sans-serif;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+
+  /* ---------- background ---------- */
+  #bg-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;display:block}
+  .glow{position:fixed;z-index:0;border-radius:50%;filter:blur(95px);pointer-events:none;opacity:.5}
+  .glow-a{width:48vw;height:48vw;left:-12vw;top:-14vw;
+    background:radial-gradient(circle,rgba(108,107,242,.6),transparent 65%);
+    animation:drift-a 28s ease-in-out infinite}
+  .glow-b{width:54vw;height:54vw;right:-16vw;top:14vh;
+    background:radial-gradient(circle,rgba(169,139,250,.5),transparent 65%);
+    animation:drift-b 34s ease-in-out infinite}
+  .glow-c{width:34vw;height:34vw;left:24vw;bottom:-16vw;
+    background:radial-gradient(circle,rgba(255,154,77,.3),transparent 65%);
+    animation:drift-c 40s ease-in-out infinite}
+  @keyframes drift-a{50%{transform:translate3d(6vw,8vh,0) scale(1.12)}}
+  @keyframes drift-b{50%{transform:translate3d(-7vw,-6vh,0) scale(1.08)}}
+  @keyframes drift-c{50%{transform:translate3d(4vw,-7vh,0) scale(1.15)}}
+  .grid-veil{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 25%,transparent 78%);
+    -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,#000 25%,transparent 78%);opacity:.45}
+  .vignette{position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(ellipse at 50% 30%,transparent 35%,rgba(3,4,12,.8) 100%)}
+
+  /* ---------- shell ---------- */
+  .page{position:relative;z-index:2;min-height:100%;display:flex;flex-direction:column}
+  .site-head{display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:22px clamp(18px,5vw,56px)}
+  .brand{display:flex;align-items:center;gap:11px;font-size:17px;letter-spacing:-.015em}
+  .brand b{font-weight:650}
+  .brand span{color:var(--ink-dim);font-weight:400}
+  .mark{width:26px;height:26px;border-radius:8px;flex:0 0 auto;
+    background:conic-gradient(from 210deg,var(--indigo),var(--violet),var(--orange),var(--indigo));
+    box-shadow:0 0 18px rgba(108,107,242,.55)}
+  .head-note{font-size:13px;color:var(--ink-dim)}
+
+  .stage{flex:1;display:flex;flex-direction:column;justify-content:center;
+    padding:2vh clamp(10px,3vw,28px) 3vh;
+    max-width:1400px;margin:0 auto;width:100%}
+
+  /* ---------- view swap (no popup, no scrim) ---------- */
+  .view-stack{position:relative;min-height:clamp(600px,92vh,980px)}
+  .hero-view{
+    position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    gap:clamp(28px,5vh,52px);
+    opacity:1;transform:translateY(0);
+    transition:opacity .38s ease,transform .38s ease;
+  }
+  .hero-view.hide{opacity:0;transform:translateY(-10px);pointer-events:none}
+
+  .lede{max-width:34ch}
+  .lede h1{margin:0 0 14px;font-size:clamp(34px,5.4vw,60px);line-height:1.04;
+    letter-spacing:-.035em;font-weight:600}
+  .lede p{margin:0;color:var(--ink-dim);font-size:clamp(15px,1.6vw,17px);line-height:1.65;max-width:52ch}
+
+  /* ---------- course card ---------- */
+  .card-row{display:flex}
+  .course{
+    position:relative;text-align:left;cursor:pointer;
+    width:min(520px,100%);padding:26px 26px 22px;
+    border-radius:20px;border:1px solid rgba(255,255,255,.09);
+    background:linear-gradient(160deg,rgba(24,27,48,.82),rgba(10,12,26,.78));
+    color:inherit;font:inherit;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:0 24px 60px -30px rgba(0,0,0,.9);
+    transition:transform .35s cubic-bezier(.2,.8,.25,1),border-color .35s,box-shadow .35s;
+  }
+  .course:hover,.course:focus-visible{
+    transform:translateY(-4px);
+    border-color:rgba(169,139,250,.42);
+    box-shadow:0 34px 70px -30px rgba(76,60,190,.75);
+  }
+  .course:focus-visible{outline:2px solid var(--violet);outline-offset:4px}
+  .course-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .tag{font-size:12px;letter-spacing:.02em;color:var(--violet);
+    border:1px solid rgba(169,139,250,.3);border-radius:999px;padding:5px 11px;
+    background:rgba(169,139,250,.08)}
+  .level{font-size:12.5px;color:var(--ink-dim)}
+  .course h2{margin:0 0 8px;font-size:25px;font-weight:600;letter-spacing:-.025em}
+  .course .desc{margin:0 0 20px;color:var(--ink-dim);font-size:14.5px;line-height:1.6}
+  .course-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding-top:16px;border-top:1px solid rgba(255,255,255,.07)}
+  .stats{display:flex;gap:16px;font-size:13px;color:var(--ink-dim);font-variant-numeric:tabular-nums}
+  .stats b{color:var(--ink);font-weight:550}
+  .open{font-size:13.5px;color:var(--ink);display:flex;align-items:center;gap:8px}
+  .open .dot{width:7px;height:7px;border-radius:50%;background:#3DDC8C;
+    box-shadow:0 0 10px #3DDC8C}
+
+  .sheen{position:absolute;inset:0;border-radius:20px;pointer-events:none;
+    background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.07) 50%,transparent 62%);
+    opacity:0;transition:opacity .4s}
+  .course:hover .sheen{opacity:1}
+
+  /* ---------- glass panel (inline, fixed size, replaces hero) ---------- */
+  .panel-view{
+    position:absolute;inset:0;
+    display:flex;align-items:stretch;justify-content:center;
+    opacity:0;transform:translateY(10px);
+    transition:opacity .42s cubic-bezier(.2,.8,.25,1),transform .42s cubic-bezier(.2,.8,.25,1);
+    pointer-events:none;
+  }
+  .panel-view.show{opacity:1;transform:none;pointer-events:auto}
+
+  .panel{
+    position:relative;width:min(1180px,98%);height:100%;
+    display:flex;flex-direction:column;
+    border-radius:26px;
+    border:1px solid rgba(255,255,255,.14);
+    background:linear-gradient(155deg,rgba(255,255,255,.10),rgba(255,255,255,.035));
+    backdrop-filter:blur(26px) saturate(150%);
+    -webkit-backdrop-filter:blur(26px) saturate(150%);
+    box-shadow:0 40px 90px -35px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.18);
+    overflow:hidden;
+  }
+  .panel::after{
+    content:"";position:absolute;inset:0;border-radius:26px;pointer-events:none;
+    background:linear-gradient(140deg,rgba(169,139,250,.14),transparent 45%,rgba(255,154,77,.09));
+    mix-blend-mode:screen;
+  }
+
+  .panel-head{
+    position:relative;z-index:1;flex:0 0 auto;display:flex;align-items:flex-start;justify-content:space-between;
+    gap:16px;padding:24px clamp(20px,4vw,34px) 18px;
+    border-bottom:1px solid rgba(255,255,255,.09);
+  }
+  .panel-head h2{margin:0;font-size:21px;font-weight:600;letter-spacing:-.025em}
+  .panel-head .sub{margin:5px 0 0;font-size:13px;color:var(--ink-dim)}
+  .close{
+    flex:0 0 auto;width:34px;height:34px;border-radius:11px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);
+    color:var(--ink);font-size:17px;line-height:1;display:grid;place-items:center;
+    transition:background .25s,border-color .25s;
+  }
+  .close:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+  .close:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+
+  .panel-viewport{position:relative;z-index:1;flex:1 1 auto;overflow:hidden;touch-action:pan-y}
+  .panel-track{
+    display:flex;height:100%;
+    transition:transform .48s cubic-bezier(.2,.8,.25,1);
+  }
+  .page-slot{
+    height:100%;flex:0 0 auto;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    display:flex;
+    padding:clamp(20px,4vw,32px);
+  }
+  .slot-inner{margin:auto;width:100%;max-width:640px;text-align:center}
+
+  .copy-en, .copy-fa{margin:0;font-size:15px;line-height:1.75;color:var(--ink)}
+  .copy-en{margin-bottom:20px}
+  .copy-fa{
+    font-family:var(--fa);direction:rtl;text-align:center;
+    color:var(--ink-dim);font-size:15.5px;line-height:2;
+  }
+  .divider-label{font-size:11.5px;color:var(--violet);margin:0 0 8px;letter-spacing:.02em}
+
+  .lead-line{margin:0 0 18px;font-size:15px;line-height:1.65;color:var(--ink)}
+  .topic-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:11px;width:100%}
+  .topic-list li{
+    font-size:14px;line-height:1.55;color:var(--ink-dim);
+    padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,.07);
+  }
+  .topic-list li:last-child{border-bottom:none;padding-bottom:0}
+  .topic-list b{color:var(--ink);font-weight:600}
+  .lead-line.copy-fa{margin:22px 0 12px}
+  .topic-list.copy-fa{direction:rtl}
+  .topic-list.copy-fa li{font-family:var(--fa);font-size:14.5px;line-height:1.9}
+
+  .panel-foot{
+    position:relative;z-index:1;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:16px clamp(20px,4vw,34px) 22px;
+    border-top:1px solid rgba(255,255,255,.09);
+  }
+  .page-counter{font-size:13px;color:var(--ink-dim);font-variant-numeric:tabular-nums;letter-spacing:.02em}
+
+  .nav-btn{
+    border-radius:11px;padding:10px 18px;font-size:14px;font-weight:550;cursor:pointer;
+    border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--ink);
+    transition:background .25s,border-color .25s,opacity .25s,transform .2s;
+  }
+  .nav-btn:hover:not(:disabled){background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+  .nav-btn:active:not(:disabled){transform:scale(.97)}
+  .nav-btn:disabled{opacity:.35;cursor:default}
+  .nav-btn.primary{
+    background:linear-gradient(135deg,var(--indigo),var(--violet));
+    border-color:transparent;color:#fff;
+  }
+  .nav-btn.primary:hover{filter:brightness(1.08)}
+  .nav-btn:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+
+  @media (prefers-reduced-motion:reduce){
+    .glow{animation:none}
+    .course{transition:none}
+    .hero-view,.panel-view{transition:opacity .2s linear;transform:none}
+    .panel-track{transition:none}
+  }
+  @media (max-width:640px){
+    .head-note{display:none}
+    .course{padding:22px 20px 18px}
+    .course h2{font-size:22px}
+    .stats{gap:12px;font-size:12.5px}
+    .copy-en, .copy-fa{font-size:14px}
+    .nav-btn{padding:9px 14px;font-size:13.5px}
+    .view-stack{min-height:clamp(560px,88vh,760px)}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+<div class="glow glow-a"></div>
+<div class="glow glow-b"></div>
+<div class="glow glow-c"></div>
+<div class="grid-veil"></div>
+<div class="vignette"></div>
+
+<div class="page">
+  <header class="site-head">
+    <div class="brand"><span class="mark"></span><b>Alpha</b><span>Academy</span></div>
+    <div class="head-note">Applied AI, taught by practitioners</div>
+  </header>
+
+  <main class="stage">
+    <div class="view-stack">
+
+      <section class="hero-view" id="heroView">
+        <div class="lede">
+          <h1>Learn the machine learning that moves markets.</h1>
+          <p>Short, dense courses on building AI systems that work with real data — models, pipelines, and the judgment to know when a signal is noise.</p>
+        </div>
+
+        <div class="card-row">
+          <button class="course" id="courseCard" type="button" aria-haspopup="true" aria-expanded="false">
+            <span class="sheen"></span>
+            <div class="course-top">
+              <span class="tag">AI &amp; Data</span>
+              <span class="level">Intermediate</span>
+            </div>
+            <h2>Python for Finance</h2>
+            <p class="desc">Build data-driven, AI-first systems in Python: modelling market data, training and evaluating predictive models, and putting them into production safely.</p>
+            <div class="course-foot">
+              <div class="stats"><span><b>2</b> lessons</span><span><b>Text</b> format</span><span><b>EN</b> + فارسی</span></div>
+              <span class="open"><span class="dot"></span>Open course</span>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section class="panel-view" id="panelView">
+        <div class="panel" id="panel" role="region" aria-label="Python for Finance">
+          <div class="panel-head">
+            <div>
+              <h2>Python for Finance</h2>
+              <p class="sub">Course</p>
+            </div>
+            <button class="close" id="closeBtn" type="button" aria-label="Back to courses">&#10005;</button>
+          </div>
+
+          <div class="panel-viewport">
+            <div class="panel-track" id="panelTrack"></div>
+          </div>
+
+          <div class="panel-foot">
+            <button class="nav-btn" id="backBtn" type="button" disabled>Back</button>
+            <div class="page-counter" id="pageCounter">1/2</div>
+            <button class="nav-btn primary" id="nextBtn" type="button">Next</button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script src="lessons.js"></script>
+<script>
+(function(){
+  const c=document.getElementById('bg-canvas'), ctx=c.getContext('2d');
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W=0,H=0,DPR=1,nodes=[],dust=[];
+  const rand=(a,b)=>a+Math.random()*(b-a);
+
+  function build(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    W=c.clientWidth;H=c.clientHeight;
+    c.width=W*DPR;c.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);
+
+    const n=W<640?26:60;
+    nodes=[];
+    for(let i=0;i<n;i++){
+      nodes.push({x:rand(0,W),y:rand(0,H),vx:rand(-.16,.16),vy:rand(-.16,.16),r:rand(1,2.3),p:rand(0,Math.PI*2)});
+    }
+    dust=[];
+    const m=W<640?18:40;
+    for(let i=0;i<m;i++){
+      dust.push({x:rand(0,W),y:rand(0,H),r:rand(.4,1.2),vy:rand(-.18,-.04),a:rand(.08,.3)});
+    }
+  }
+
+  function draw(t){
+    ctx.clearRect(0,0,W,H);
+    const link=W<640?120:160;
+
+    for(let i=0;i<nodes.length;i++){
+      const a=nodes[i];
+      if(!reduce){a.x+=a.vx;a.y+=a.vy;}
+      if(a.x<0||a.x>W)a.vx*=-1;
+      if(a.y<0||a.y>H)a.vy*=-1;
+      for(let j=i+1;j<nodes.length;j++){
+        const b=nodes[j],dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy);
+        if(d<link){
+          const o=(1-d/link)*0.22;
+          ctx.strokeStyle='rgba(140,135,255,'+o.toFixed(3)+')';
+          ctx.lineWidth=1;
+          ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach((a,i)=>{
+      const pulse=reduce?.45:.35+Math.sin(t/900+a.p)*.25;
+      ctx.beginPath();ctx.arc(a.x,a.y,a.r,0,Math.PI*2);
+      ctx.fillStyle=(i%9===0?'rgba(255,154,77,':'rgba(185,175,255,')+pulse.toFixed(2)+')';
+      ctx.fill();
+    });
+
+    dust.forEach(d=>{
+      if(!reduce){d.y+=d.vy;}
+      if(d.y<-6){d.y=H+6;d.x=rand(0,W);}
+      ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(210,215,255,'+d.a+')';ctx.fill();
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  build();requestAnimationFrame(draw);
+  let rid;window.addEventListener('resize',()=>{clearTimeout(rid);rid=setTimeout(build,150)});
+})();
+</script>
+<script>
+(function(){
+  const card=document.getElementById('courseCard');
+  const heroView=document.getElementById('heroView');
+  const panelView=document.getElementById('panelView');
+  const closeBtn=document.getElementById('closeBtn');
+  const backBtn=document.getElementById('backBtn');
+  const nextBtn=document.getElementById('nextBtn');
+  const pageCounter=document.getElementById('pageCounter');
+  const track=document.getElementById('panelTrack');
+  const viewport=document.querySelector('.panel-viewport');
+
+  function el(tag, className, text){
+    const e=document.createElement(tag);
+    if(className) e.className=className;
+    if(text!=null) e.textContent=text;
+    return e;
+  }
+
+  function buildList(ul, lead, items, fa){
+    if(fa){ ul.classList.add('copy-fa'); }
+    items.forEach(it=>{
+      const li=document.createElement('li');
+      li.appendChild(el('b', null, it.title+':'));
+      li.appendChild(document.createTextNode(' '+it.desc));
+      ul.appendChild(li);
+    });
+  }
+
+  function buildSlot(lesson){
+    const slot=el('div','page-slot');
+    const inner=el('div','slot-inner');
+
+    if(lesson.type==='paragraph'){
+      inner.appendChild(el('p','copy-en',lesson.en.text));
+      inner.appendChild(el('p','copy-fa',lesson.fa.text));
+    } else if(lesson.type==='list'){
+      inner.appendChild(el('p','lead-line',lesson.en.lead));
+      const ulEn=el('ul','topic-list');
+      buildList(ulEn, lesson.en.lead, lesson.en.items, false);
+      inner.appendChild(ulEn);
+
+      const leadFa=el('p','lead-line copy-fa',lesson.fa.lead);
+      leadFa.style.marginTop='22px';
+      inner.appendChild(leadFa);
+      const ulFa=el('ul','topic-list');
+      buildList(ulFa, lesson.fa.lead, lesson.fa.items, true);
+      inner.appendChild(ulFa);
+    }
+
+    slot.appendChild(inner);
+    return slot;
+  }
+
+  const lessons = window.LESSONS;
+  if(!Array.isArray(lessons) || lessons.length===0){
+    const warn=el('div','page-slot');
+    const inner=el('div','slot-inner');
+    inner.appendChild(el('p','copy-en','Could not load the lesson content. Make sure "lessons.js" is saved in the same folder as this HTML file, then reload the page.'));
+    warn.appendChild(inner);
+    track.appendChild(warn);
+  } else {
+    lessons.forEach(lesson=> track.appendChild(buildSlot(lesson)));
+  }
+
+  const slots=Array.from(document.querySelectorAll('.page-slot'));
+  const n=slots.length;
+  let idx=0;
+
+  track.style.width=(n*100)+'%';
+  slots.forEach(s=>{ s.style.width=(100/n)+'%'; });
+
+  function renderTrack(){
+    track.style.transform='translateX(-'+(idx*(100/n))+'%)';
+    pageCounter.textContent=(idx+1)+'/'+n;
+    backBtn.disabled = idx===0;
+    nextBtn.disabled = idx===n-1;
+  }
+
+  function goNext(){ if(idx<n-1){ idx++; renderTrack(); } }
+  function goBack(){ if(idx>0){ idx--; renderTrack(); } }
+
+  function open(){
+    heroView.classList.add('hide');
+    panelView.classList.add('show');
+    card.setAttribute('aria-expanded','true');
+    setTimeout(()=>closeBtn.focus(),120);
+  }
+  function close(){
+    panelView.classList.remove('show');
+    heroView.classList.remove('hide');
+    card.setAttribute('aria-expanded','false');
+    idx=0; renderTrack();
+    card.focus();
+  }
+
+  card.addEventListener('click',open);
+  closeBtn.addEventListener('click',close);
+  document.addEventListener('keydown',e=>{
+    if(!panelView.classList.contains('show')) return;
+    if(e.key==='Escape') close();
+    if(e.key==='ArrowRight') goNext();
+    if(e.key==='ArrowLeft') goBack();
+  });
+
+  nextBtn.addEventListener('click',goNext);
+  backBtn.addEventListener('click',goBack);
+
+  // horizontal swipe navigation; vertical scrolling inside a page stays native
+  let touchX=0, touchY=0, dragging=false, horizontal=false;
+  viewport.addEventListener('touchstart',e=>{
+    touchX=e.touches[0].clientX; touchY=e.touches[0].clientY; dragging=true; horizontal=false;
+  },{passive:true});
+  viewport.addEventListener('touchmove',e=>{
+    if(!dragging) return;
+    const dx=e.touches[0].clientX-touchX, dy=e.touches[0].clientY-touchY;
+    if(!horizontal && Math.abs(dx)>10 && Math.abs(dx)>Math.abs(dy)) horizontal=true;
+    if(horizontal) e.preventDefault();
+  },{passive:false});
+  viewport.addEventListener('touchend',e=>{
+    if(!dragging) return; dragging=false;
+    if(!horizontal) return;
+    const dx=e.changedTouches[0].clientX-touchX;
+    if(Math.abs(dx)>40){ if(dx<0) goNext(); else goBack(); }
+  });
+
+  renderTrack();
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
