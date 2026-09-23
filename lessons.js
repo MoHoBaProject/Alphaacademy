@@ -129,22 +129,35 @@ const LESSONS = [
   {
     type: "list",
     en: {
-      lead: "There is a certain set of packages that is collectively labeled the scientific stack. This stack comprises, among others, the following packages:",
+      lead: "There is a certain set of packages that is collectively labeled the scientific stack (part 1):",
       items: [
         { title: "NumPy", desc: "NumPy provides a multidimensional array object to store homogeneous or heterogeneous data; it also provides optimized functions/methods to operate on this array object." },
         { title: "SciPy", desc: "SciPy is a collection of subpackages and functions implementing important standard functionality often needed in science or finance; for example, one finds functions for cubic splines interpolation as well as for numerical integration." },
-        { title: "matplotlib", desc: "This is the most popular plotting and visualization package for Python, providing both 2D and 3D visualization capabilities." },
+        { title: "matplotlib", desc: "This is the most popular plotting and visualization package for Python, providing both 2D and 3D visualization capabilities." }
+      ]
+    },
+    fa: {
+      lead: "مجموعه‌ای از پکیج‌ها وجود دارد که در مجموع به آن‌ها «استک علمی» (scientific stack) گفته می‌شود (بخش اول):",
+      items: [
+        { title: "NumPy", desc: "NumPy یک شیء آرایه‌ی چندبعدی برای ذخیره‌ی داده‌های همگن یا ناهمگن ارائه می‌دهد؛ همچنین توابع/متدهای بهینه‌شده‌ای برای کار با این شیء آرایه فراهم می‌کند." },
+        { title: "SciPy", desc: "SciPy مجموعه‌ای از زیرپکیج‌ها و توابع است که قابلیت‌های استاندارد مهمی را که اغلب در علم یا مالی مورد نیازند پیاده‌سازی می‌کند؛ برای مثال، توابعی برای درون‌یابی اسپلاین مکعبی و همچنین انتگرال‌گیری عددی در آن یافت می‌شود." },
+        { title: "matplotlib", desc: "این محبوب‌ترین پکیج رسم نمودار و بصری‌سازی برای پایتون است که هم قابلیت‌های بصری‌سازی دوبعدی و هم سه‌بعدی را فراهم می‌کند." }
+      ]
+    }
+  },
+  {
+    type: "list",
+    en: {
+      lead: "The scientific stack (part 2):",
+      items: [
         { title: "pandas", desc: "pandas builds on NumPy and provides richer classes for the management and analysis of time series and tabular data; it is tightly integrated with matplotlib for plotting and PyTables for data storage and retrieval." },
         { title: "scikit-learn", desc: "scikit-learn is a popular machine learning (ML) package that provides a unified application programming interface (API) for many different ML algorithms, such as for estimation, classification, or clustering." },
         { title: "PyTables", desc: "PyTables is a popular wrapper for the HDF5 data storage package; it is a package to implement optimized, disk-based I/O operations based on a hierarchical database/file format." }
       ]
     },
     fa: {
-      lead: "مجموعه‌ای از پکیج‌ها وجود دارد که در مجموع به آن‌ها «استک علمی» (scientific stack) گفته می‌شود. این استک، از جمله، شامل پکیج‌های زیر است:",
+      lead: "استک علمی (بخش دوم):",
       items: [
-        { title: "NumPy", desc: "NumPy یک شیء آرایه‌ی چندبعدی برای ذخیره‌ی داده‌های همگن یا ناهمگن ارائه می‌دهد؛ همچنین توابع/متدهای بهینه‌شده‌ای برای کار با این شیء آرایه فراهم می‌کند." },
-        { title: "SciPy", desc: "SciPy مجموعه‌ای از زیرپکیج‌ها و توابع است که قابلیت‌های استاندارد مهمی را که اغلب در علم یا مالی مورد نیازند پیاده‌سازی می‌کند؛ برای مثال، توابعی برای درون‌یابی اسپلاین مکعبی و همچنین انتگرال‌گیری عددی در آن یافت می‌شود." },
-        { title: "matplotlib", desc: "این محبوب‌ترین پکیج رسم نمودار و بصری‌سازی برای پایتون است که هم قابلیت‌های بصری‌سازی دوبعدی و هم سه‌بعدی را فراهم می‌کند." },
         { title: "pandas", desc: "pandas بر پایه‌ی NumPy ساخته شده و کلاس‌های غنی‌تری برای مدیریت و تحلیل داده‌های سری زمانی و جدولی ارائه می‌دهد؛ این پکیج به‌طور نزدیک با matplotlib برای رسم نمودار و PyTables برای ذخیره و بازیابی داده یکپارچه شده است." },
         { title: "scikit-learn", desc: "scikit-learn یک پکیج محبوب یادگیری ماشین (ML) است که یک رابط برنامه‌نویسی کاربردی (API) یکپارچه برای بسیاری از الگوریتم‌های مختلف ML، مانند تخمین، طبقه‌بندی یا خوشه‌بندی، فراهم می‌کند." },
         { title: "PyTables", desc: "PyTables یک wrapper محبوب برای پکیج ذخیره‌سازی داده‌ی HDF5 است؛ این پکیج برای پیاده‌سازی عملیات ورودی/خروجی بهینه‌شده و دیسک‌محور، بر پایه‌ی یک فرمت پایگاه‌داده/فایل سلسله‌مراتبی، به کار می‌رود." }
