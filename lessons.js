@@ -47,5 +47,14 @@ const LESSONS = [
         { title: "تحلیل ابزارهای مشتقه", desc: "توسعه‌ی یک پکیج پایتون انعطاف‌پذیر و قدرتمند برای قیمت‌گذاری اختیار معامله، ابزارهای مشتقه و مدیریت ریسک." }
       ]
     }
+  },
+  {
+    type: "paragraph",
+    en: {
+      text: "Python is an interpreted, object-oriented, high-level programming language with dynamic semantics. Its high-level built in data structures, combined with dynamic typing and dynamic binding, make it very attractive for Rapid Application Development, as well as for use as a scripting or glue language to connect existing components together. Python's simple, easy to learn syntax emphasizes readability and therefore reduces the cost of program maintenance. Python supports modules and packages, which encourages program modularity and code reuse. The Python interpreter and the extensive standard library are available in source or binary form without charge for all major platforms, and can be freely distributed."
+    },
+    fa: {
+      text: "پایتون یک زبان برنامه‌نویسی تفسیری، شی‌گرا و سطح بالا با معناشناسی پویا است. ساختارهای داده‌ی سطح بالای درونی آن، همراه با تایپینگ پویا و بایندینگ پویا، آن را برای توسعه‌ی سریع اپلیکیشن (RAD) و همچنین استفاده به‌عنوان یک زبان اسکریپت‌نویسی یا اتصال‌دهنده برای پیوند دادن اجزای موجود به یکدیگر، بسیار جذاب می‌سازد. نحو ساده و آسان‌فهم پایتون بر خوانایی تأکید دارد و در نتیجه هزینه‌ی نگهداری برنامه را کاهش می‌دهد. پایتون از ماژول‌ها و پکیج‌ها پشتیبانی می‌کند که ماژولار بودن برنامه و استفاده‌ی مجدد از کد را تشویق می‌کند. مفسر پایتون و کتابخانه‌ی استاندارد گسترده‌ی آن به‌صورت سورس یا باینری برای همه‌ی پلتفرم‌های اصلی به‌صورت رایگان در دسترس است و می‌توان آن را آزادانه توزیع کرد."
+    }
   }
 ];
