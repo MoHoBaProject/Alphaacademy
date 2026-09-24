@@ -135,7 +135,7 @@ const LESSONS = [
         { title: "SciPy", desc: "SciPy is a collection of subpackages and functions implementing important standard functionality often needed in science or finance; for example, one finds functions for cubic splines interpolation as well as for numerical integration." },
         { title: "matplotlib", desc: "This is the most popular plotting and visualization package for Python, providing both 2D and 3D visualization capabilities." }
       ]
-    },
+    },=
     fa: {
       lead: "مجموعه‌ای از پکیج‌ها وجود دارد که در مجموع به آن‌ها «استک علمی» (scientific stack) گفته می‌شود (بخش اول):",
       items: [
