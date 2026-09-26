@@ -1,8 +1,9 @@
-const CACHE = "alphaacademy-v1";
+const CACHE = "alphaacademy-v2";
 const ASSETS = [
   "./",
   "./index.html",
-  "./lessons.js",
+  "./lessons/python-finance.js",
+  "./lessons/rag.js",
   "./manifest.json",
   "./icon-192.png",
   "./icon-512.png"

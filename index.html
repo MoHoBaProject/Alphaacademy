@@ -86,7 +86,7 @@
   .lede p{margin:0;color:var(--ink-dim);font-size:clamp(15px,1.6vw,17px);line-height:1.65;max-width:52ch}
 
   /* ---------- course card ---------- */
-  .card-row{display:flex}
+  .card-row{display:flex;flex-wrap:wrap;gap:20px}
   .course{
     position:relative;text-align:left;cursor:pointer;
     width:min(520px,100%);padding:26px 26px 22px;
@@ -263,28 +263,14 @@
           <p>Short, dense courses on building AI systems that work with real data — models, pipelines, and the judgment to know when a signal is noise.</p>
         </div>
 
-        <div class="card-row">
-          <button class="course" id="courseCard" type="button" aria-haspopup="true" aria-expanded="false">
-            <span class="sheen"></span>
-            <div class="course-top">
-              <span class="tag">AI &amp; Data</span>
-              <span class="level">Intermediate</span>
-            </div>
-            <h2>Python for Finance</h2>
-            <p class="desc">Build data-driven, AI-first systems in Python: modelling market data, training and evaluating predictive models, and putting them into production safely.</p>
-            <div class="course-foot">
-              <div class="stats"><span><b>2</b> lessons</span><span><b>Text</b> format</span><span><b>EN</b> + فارسی</span></div>
-              <span class="open"><span class="dot"></span>Open course</span>
-            </div>
-          </button>
-        </div>
+        <div class="card-row" id="cardRow"></div>
       </section>
 
       <section class="panel-view" id="panelView">
-        <div class="panel" id="panel" role="region" aria-label="Python for Finance">
+        <div class="panel" id="panel" role="region" aria-label="Course">
           <div class="panel-head">
             <div>
-              <h2>Python for Finance</h2>
+              <h2 id="panelTitle">Course</h2>
               <p class="sub">Course</p>
             </div>
             <button class="close" id="closeBtn" type="button" aria-label="Back to courses">&#10005;</button>
@@ -372,9 +358,27 @@
 </script>
 <script>
 (function(){
-  const card=document.getElementById('courseCard');
+  const COURSES = [
+    {
+      title: "Python for Finance",
+      tag: "AI & Data",
+      level: "Intermediate",
+      desc: "Build data-driven, AI-first systems in Python: modelling market data, training and evaluating predictive models, and putting them into production safely.",
+      file: "lessons/python-finance.js"
+    },
+    {
+      title: "Retrieval-Augmented Generation",
+      tag: "AI & Data",
+      level: "Intermediate",
+      desc: "Combine retrieval systems with large language models: build pipelines that ground generation in real data, from embeddings and vector search to production RAG architectures.",
+      file: "lessons/rag.js"
+    }
+  ];
+
+  const cardRow=document.getElementById('cardRow');
   const heroView=document.getElementById('heroView');
   const panelView=document.getElementById('panelView');
+  const panelTitle=document.getElementById('panelTitle');
   const closeBtn=document.getElementById('closeBtn');
   const backBtn=document.getElementById('backBtn');
   const nextBtn=document.getElementById('nextBtn');
@@ -389,7 +393,7 @@
     return e;
   }
 
-  function buildList(ul, lead, items, fa){
+  function buildList(ul, items, fa){
     if(fa){ ul.classList.add('copy-fa'); }
     items.forEach(it=>{
       const li=document.createElement('li');
@@ -409,14 +413,14 @@
     } else if(lesson.type==='list'){
       inner.appendChild(el('p','lead-line',lesson.en.lead));
       const ulEn=el('ul','topic-list');
-      buildList(ulEn, lesson.en.lead, lesson.en.items, false);
+      buildList(ulEn, lesson.en.items, false);
       inner.appendChild(ulEn);
 
       const leadFa=el('p','lead-line copy-fa',lesson.fa.lead);
       leadFa.style.marginTop='22px';
       inner.appendChild(leadFa);
       const ulFa=el('ul','topic-list');
-      buildList(ulFa, lesson.fa.lead, lesson.fa.items, true);
+      buildList(ulFa, lesson.fa.items, true);
       inner.appendChild(ulFa);
     }
 
@@ -424,26 +428,26 @@
     return slot;
   }
 
-  function diagnosticMessage(result){
+  function diagnosticMessage(result, file){
     if(result.error==='not-found'){
-      return 'Could not find "lessons.js" (' + result.detail + '). Make sure it was uploaded to the same folder/deployment as this page.';
+      return 'Could not find "'+file+'" (' + result.detail + '). Make sure it was uploaded to the same deployment as this page.';
     }
     if(result.error==='html-fallback'){
-      return 'The server sent back the HTML page instead of "lessons.js" (likely a single-page-app / catch-all fallback route on your host). Check your Cloudflare Worker or Pages routing so .js files are served as static assets, not redirected to index.html.';
+      return 'The server sent back the HTML page instead of "'+file+'" (likely a single-page-app / catch-all fallback route on your host). Check your Cloudflare Worker or Pages routing so .js files are served as static assets, not redirected to index.html.';
     }
     if(result.error==='parse-error'){
-      return 'Found "lessons.js" but it has a JavaScript error: ' + result.detail;
+      return 'Found "'+file+'" but it has a JavaScript error: ' + result.detail;
     }
     if(result.error==='no-lessons-array'){
-      return '"lessons.js" loaded but did not define a LESSONS array. Check that the file still has "const LESSONS = [ ... ];" in it.';
+      return '"'+file+'" loaded but did not define a LESSONS array. Check that the file still has "const LESSONS = [ ... ];" in it.';
     }
-    return 'Could not load the lesson content (' + (result.detail||result.error) + ').';
+    return 'Could not load "'+file+'" (' + (result.detail||result.error) + ').';
   }
 
-  async function loadLessons(){
+  async function loadLessons(file){
     let res;
     try{
-      res = await fetch(new URL('lessons.js', document.baseURI).href, { cache:'no-store' });
+      res = await fetch(new URL(file, document.baseURI).href, { cache:'no-store' });
     }catch(e){
       return { error:'network', detail:e.message };
     }
@@ -467,56 +471,114 @@
     }
   }
 
-  loadLessons().then(result=>{
-    if(result.lessons){
-      result.lessons.forEach(lesson=> track.appendChild(buildSlot(lesson)));
-    } else {
-      const warn=el('div','page-slot');
-      const inner=el('div','slot-inner');
-      inner.appendChild(el('p','copy-en', diagnosticMessage(result)));
-      warn.appendChild(inner);
-      track.appendChild(warn);
-    }
-    initNav();
-  });
-
-  function initNav(){
-  const slots=Array.from(document.querySelectorAll('.page-slot'));
-  const n=slots.length;
-  let idx=0;
-
-  track.style.width=(n*100)+'%';
-  slots.forEach(s=>{ s.style.width=(100/n)+'%'; });
+  // ---- panel navigation state (shared across courses; reset on each open) ----
+  let n=0, idx=0;
 
   function renderTrack(){
-    track.style.transform='translateX(-'+(idx*(100/n))+'%)';
+    track.style.transform='translateX(-'+(idx*(n?100/n:0))+'%)';
     pageCounter.textContent=(idx+1)+'/'+n;
     backBtn.disabled = idx===0;
     nextBtn.disabled = idx===n-1;
   }
-
   function goNext(){ if(idx<n-1){ idx++; renderTrack(); } }
   function goBack(){ if(idx>0){ idx--; renderTrack(); } }
 
-  function open(){
+  let activeCard=null;
+
+  function openCourse(course, cardEl){
+    activeCard=cardEl;
+    panelTitle.textContent=course.title;
+    track.innerHTML='';
+    track.style.width='100%';
+    const loading=el('div','page-slot');
+    const loadingInner=el('div','slot-inner');
+    loadingInner.appendChild(el('p','copy-en','Loading…'));
+    loading.appendChild(loadingInner);
+    track.appendChild(loading);
+    n=1; idx=0; renderTrack();
+
     heroView.classList.add('hide');
     panelView.classList.add('show');
-    card.setAttribute('aria-expanded','true');
+    cardEl.setAttribute('aria-expanded','true');
     setTimeout(()=>closeBtn.focus(),120);
-  }
-  function close(){
-    panelView.classList.remove('show');
-    heroView.classList.remove('hide');
-    card.setAttribute('aria-expanded','false');
-    idx=0; renderTrack();
-    card.focus();
+
+    loadLessons(course.file).then(result=>{
+      track.innerHTML='';
+      let slots;
+      if(result.lessons){
+        slots=result.lessons.map(buildSlot);
+      } else {
+        const warn=el('div','page-slot');
+        const inner=el('div','slot-inner');
+        inner.appendChild(el('p','copy-en', diagnosticMessage(result, course.file)));
+        warn.appendChild(inner);
+        slots=[warn];
+      }
+      slots.forEach(s=>track.appendChild(s));
+      n=slots.length; idx=0;
+      track.style.width=(n*100)+'%';
+      slots.forEach(s=>{ s.style.width=(100/n)+'%'; });
+      renderTrack();
+    });
   }
 
-  card.addEventListener('click',open);
-  closeBtn.addEventListener('click',close);
+  function closePanel(){
+    panelView.classList.remove('show');
+    heroView.classList.remove('hide');
+    if(activeCard){
+      activeCard.setAttribute('aria-expanded','false');
+      activeCard.focus();
+    }
+  }
+
+  function buildCard(course){
+    const card=el('button','course');
+    card.type='button';
+    card.setAttribute('aria-haspopup','true');
+    card.setAttribute('aria-expanded','false');
+    card.appendChild(el('span','sheen'));
+
+    const top=el('div','course-top');
+    top.appendChild(el('span','tag',course.tag));
+    top.appendChild(el('span','level',course.level));
+    card.appendChild(top);
+
+    card.appendChild(el('h2',null,course.title));
+    card.appendChild(el('p','desc',course.desc));
+
+    const foot=el('div','course-foot');
+    const stats=el('div','stats');
+    const lessonsStat=el('span',null,'');
+    const lessonsB=el('b',null,'…');
+    lessonsStat.appendChild(lessonsB);
+    lessonsStat.appendChild(document.createTextNode(' lessons'));
+    stats.appendChild(lessonsStat);
+    const fmt=el('span',null,''); fmt.innerHTML='<b>Text</b> format'; stats.appendChild(fmt);
+    const lang=el('span',null,''); lang.innerHTML='<b>EN</b> + فارسی'; stats.appendChild(lang);
+    foot.appendChild(stats);
+
+    const open=el('span','open');
+    open.appendChild(el('span','dot'));
+    open.appendChild(document.createTextNode('Open course'));
+    foot.appendChild(open);
+    card.appendChild(foot);
+
+    card.addEventListener('click', ()=> openCourse(course, card));
+
+    // fill in the real lesson count once the course's file loads
+    loadLessons(course.file).then(result=>{
+      lessonsB.textContent = result.lessons ? result.lessons.length : '–';
+    });
+
+    return card;
+  }
+
+  COURSES.forEach(course=> cardRow.appendChild(buildCard(course)));
+
+  closeBtn.addEventListener('click',closePanel);
   document.addEventListener('keydown',e=>{
     if(!panelView.classList.contains('show')) return;
-    if(e.key==='Escape') close();
+    if(e.key==='Escape') closePanel();
     if(e.key==='ArrowRight') goNext();
     if(e.key==='ArrowLeft') goBack();
   });
@@ -541,9 +603,6 @@
     const dx=e.changedTouches[0].clientX-touchX;
     if(Math.abs(dx)>40){ if(dx<0) goNext(); else goBack(); }
   });
-
-  renderTrack();
-  } // end initNav
 })();
 
 if ('serviceWorker' in navigator) {
