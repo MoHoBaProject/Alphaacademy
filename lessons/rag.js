@@ -1,4 +1,4 @@
-// AlphaAcademy — Retrieval-Augmented Generation (RAG) — lesson content
+// AlphaAcademy — Retrieval-Augmented Generation (RAG) — lesson content.
 //
 // To add a new lesson, just append a new object to this LESSONS array
 // (don't forget the comma after the previous lesson's closing "}").
@@ -37,4 +37,4 @@ const LESSONS = [
       ]
     }
   }
-];(
+];
