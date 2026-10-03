@@ -116,6 +116,73 @@ const LESSONS = [
     }
   },
   {
+    type: "list",
+    en: {
+      lead: "Popular Embedding Models",
+      items: [
+        { title: "OpenAI: text-embedding-3-small (most popular choice)", desc: "1536 dimensions (default). Great for most use cases. Can reduce to 512, 1024, or any size ≤ 1536." },
+        { title: "OpenAI: text-embedding-3-large", desc: "3072 dimensions (default). Best performance, but costs more. Can reduce to 256, 512, 1024, 1536, or any size ≤ 3072." },
+        { title: "Reducing dimensions", desc: "Both OpenAI models let you reduce dimensions to save storage costs without losing much quality." },
+        { title: "Cohere", desc: "Strong multilingual support, good for international applications." },
+        { title: "Voyage AI", desc: "Often performs well in benchmarks. Current models include voyage-3-large, voyage-3.5 and voyage-3.5-lite." },
+        { title: "Mistral", desc: "Open-source option that's been showing impressive results." }
+      ]
+    },
+    fa: {
+      lead: "مدل‌های embedding محبوب",
+      items: [
+        { title: "OpenAI: text-embedding-3-small (محبوب‌ترین انتخاب)", desc: "۱۵۳۶ بُعد (پیش‌فرض). برای اغلب موارد استفاده عالی است. می‌توان آن را به ۵۱۲، ۱۰۲۴ یا هر اندازه‌ی ≤ ۱۵۳۶ کاهش داد." },
+        { title: "OpenAI: text-embedding-3-large", desc: "۳۰۷۲ بُعد (پیش‌فرض). بهترین عملکرد، اما هزینه‌ی بیشتر. می‌توان آن را به ۲۵۶، ۵۱۲، ۱۰۲۴، ۱۵۳۶ یا هر اندازه‌ی ≤ ۳۰۷۲ کاهش داد." },
+        { title: "کاهش بُعد", desc: "هر دو مدل OpenAI اجازه می‌دهند بُعدها را کم کنید تا هزینه‌ی ذخیره‌سازی کاهش یابد، بدون اینکه کیفیت زیاد افت کند." },
+        { title: "Cohere", desc: "پشتیبانی چندزبانه‌ی قوی، مناسب برنامه‌های بین‌المللی." },
+        { title: "Voyage AI", desc: "اغلب در بنچمارک‌ها عملکرد خوبی دارد. مدل‌های فعلی شامل voyage-3-large، voyage-3.5 و voyage-3.5-lite هستند." },
+        { title: "Mistral", desc: "گزینه‌ی متن‌باز که نتایج چشمگیری نشان داده است." }
+      ]
+    }
+  },
+  {
+    type: "list",
+    en: {
+      lead: "Embeddings and Vector DBs",
+      items: [
+        { title: "Vector DB definition", desc: "A database built to store all the vector embeddings is considered a vector database." },
+        { title: "Specialised vector databases", desc: "To store the vectors, we can use specialised vector databases - Pinecone, Weaviate, ChromaDB, FAISS." },
+        { title: "Regular SQL database", desc: "Or a regular SQL database - offers structured data storage and retrieval." }
+      ]
+    },
+    fa: {
+      lead: "Embeddingها و Vector DBها",
+      items: [
+        { title: "تعریف Vector DB", desc: "پایگاه داده‌ای که برای ذخیره‌ی همه‌ی vector embeddingها ساخته شده باشد، یک پایگاه داده‌ی برداری (vector database) محسوب می‌شود." },
+        { title: "Vector DBهای تخصصی", desc: "برای ذخیره‌ی بردارها می‌توانیم از پایگاه‌های داده‌ی برداری تخصصی استفاده کنیم - Pinecone، Weaviate، ChromaDB، FAISS." },
+        { title: "پایگاه داده‌ی SQL معمولی", desc: "یا یک پایگاه داده‌ی SQL معمولی - که ذخیره‌سازی و بازیابی داده‌های ساختاریافته را ارائه می‌دهد." }
+      ]
+    }
+  },
+  {
+    type: "list",
+    en: {
+      lead: "Consistency is key",
+      items: [
+        { title: "Same model everywhere", desc: "You MUST use the same embedding model for both your documents AND your user queries." },
+        { title: "Analogy", desc: "Think of embeddings like different languages. If you embed your documents using text-embedding-3-small but embed user queries using text-embedding-3-large, they literally can't understand each other." },
+        { title: "Same dimensions", desc: "Even within the same model, you must use the exact same dimensions everywhere." },
+        { title: "Example", desc: "If you embed your documents using text-embedding-3-large with 1536 dimensions, you MUST also embed user queries with text-embedding-3-large at exactly 1536 dimensions." },
+        { title: "Pick one and stick with it", desc: "Pick one embedding model at the start and stick with it throughout your entire RAG pipeline. If you want to switch later, you'll need to re-embed ALL your documents." }
+      ]
+    },
+    fa: {
+      lead: "ثبات و یکسان بودن مدل کلیدی است",
+      items: [
+        { title: "همه‌جا یک مدل", desc: "باید برای هر دو مورد، یعنی اسناد و پرسش‌های کاربر، از یک مدل embedding یکسان استفاده کنید." },
+        { title: "تشبیه", desc: "embeddingها را مثل زبان‌های مختلف در نظر بگیرید. اگر اسنادتان را با text-embedding-3-small و پرسش‌های کاربر را با text-embedding-3-large امبد کنید، آن‌ها به معنای واقعی نمی‌توانند همدیگر را بفهمند." },
+        { title: "بُعد یکسان", desc: "حتی درون یک مدل هم باید در همه‌جا دقیقاً همان تعداد بُعد را استفاده کنید." },
+        { title: "مثال", desc: "اگر اسنادتان را با text-embedding-3-large و ۱۵۳۶ بُعد embed کردید، باید پرسش‌های کاربر را هم با text-embedding-3-large و دقیقاً ۱۵۳۶ بُعد embed کنید." },
+        { title: "یکی را انتخاب کنید و پایبند بمانید", desc: "در ابتدا یک مدل embedding انتخاب کنید و در کل پایپ‌لاین RAG به آن پایبند بمانید. اگر بعداً بخواهید مدل را عوض کنید، باید همه‌ی اسنادتان را دوباره embed کنید." }
+      ]
+    }
+  },
+  {
     type: "diagram",
     en: {
       title: "The RAG pipeline (1/3): Chunking",
