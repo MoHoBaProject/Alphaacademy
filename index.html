@@ -390,15 +390,34 @@
       title: "Python for Finance",
       tag: "AI & Data",
       level: "Intermediate",
+      levelFa: "متوسط",
       desc: "Build data-driven, AI-first systems in Python: modelling market data, training and evaluating predictive models, and putting them into production safely.",
+      descFa: "سیستم‌های داده‌محور و AI-first را با پایتون بسازید: مدل‌سازی داده‌های بازار، آموزش و ارزیابی مدل‌های پیش‌بینی، و استقرار ایمن آن‌ها در production.",
+      reference: "Book: \"Python for Finance\" (O'Reilly)",
+      referenceFa: "کتاب: «Python for Finance» (انتشارات O'Reilly)",
       file: "lessons/python-finance.js"
     },
     {
       title: "Retrieval-Augmented Generation",
       tag: "AI & Data",
       level: "Intermediate",
+      levelFa: "متوسط",
       desc: "Combine retrieval systems with large language models: build pipelines that ground generation in real data, from embeddings and vector search to production RAG architectures.",
+      descFa: "سیستم‌های بازیابی را با مدل‌های زبانی بزرگ ترکیب کنید: پایپ‌لاین‌هایی بسازید که تولید محتوا را به داده‌ی واقعی متکی می‌کنند، از embeddingها و جست‌وجوی برداری تا معماری‌های RAG در production.",
+      reference: "YouTube playlist: \"Complete RAG Tutorial 2026\" by Harish Neel | AI",
+      referenceFa: "پلی‌لیست یوتیوب: «Complete RAG Tutorial 2026» از Harish Neel | AI",
       file: "lessons/rag.js"
+    },
+    {
+      title: "Apache Tika",
+      tag: "Data Engineering",
+      level: "Beginner",
+      levelFa: "مقدماتی",
+      desc: "Learn Apache Tika, the open-source toolkit for detecting file types and extracting text and metadata from over a thousand document formats — the engine behind many search and data pipelines.",
+      descFa: "جعبه‌ابزار متن‌باز Apache Tika را یاد بگیرید که برای تشخیص نوع فایل و استخراج متن و متادیتا از بیش از هزار فرمت سند استفاده می‌شود — موتور پشت بسیاری از پایپ‌لاین‌های جست‌وجو و داده.",
+      reference: "Apache Tika official documentation (tika.apache.org)",
+      referenceFa: "مستندات رسمی Apache Tika (tika.apache.org)",
+      file: "lessons/apache-tika.js"
     }
   ];
 
@@ -446,6 +465,40 @@
       s.appendChild(row);
       container.appendChild(s);
     });
+  }
+
+  function buildIntroSlot(course, lessonCount){
+    const slot=el('div','page-slot');
+    const inner=el('div','slot-inner');
+
+    inner.appendChild(el('p','lead-line', course.title));
+    inner.appendChild(el('p','copy-en', course.desc));
+
+    const ulEn=el('ul','topic-list');
+    buildList(ulEn, [
+      { title:'Lessons', desc:String(lessonCount) },
+      { title:'Level', desc:course.level },
+      { title:'Reference', desc:course.reference },
+      { title:'Format', desc:'Text — EN + فارسی' }
+    ], false);
+    inner.appendChild(ulEn);
+
+    const leadFa=el('p','lead-line copy-fa', course.title);
+    leadFa.style.marginTop='24px';
+    inner.appendChild(leadFa);
+    inner.appendChild(el('p','copy-fa', course.descFa || course.desc));
+
+    const ulFa=el('ul','topic-list');
+    buildList(ulFa, [
+      { title:'درس‌ها', desc:String(lessonCount) },
+      { title:'سطح', desc:course.levelFa || course.level },
+      { title:'منبع', desc:course.referenceFa || course.reference },
+      { title:'فرمت', desc:'متن — انگلیسی + فارسی' }
+    ], true);
+    inner.appendChild(ulFa);
+
+    slot.appendChild(inner);
+    return slot;
   }
 
   function buildSlot(lesson){
@@ -563,7 +616,7 @@
       track.innerHTML='';
       let slots;
       if(result.lessons){
-        slots=result.lessons.map(buildSlot);
+        slots=[buildIntroSlot(course, result.lessons.length), ...result.lessons.map(buildSlot)];
       } else {
         const warn=el('div','page-slot');
         const inner=el('div','slot-inner');
