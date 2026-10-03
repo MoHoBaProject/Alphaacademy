@@ -66,6 +66,51 @@
     box-shadow:0 0 18px rgba(108,107,242,.55)}
   .head-note{font-size:13px;color:var(--ink-dim)}
 
+  /* ---------- hamburger menu ---------- */
+  .site-head{position:relative;z-index:5}
+  .head-right{display:flex;align-items:center;gap:16px}
+  .menu-btn{
+    flex:0 0 auto;width:38px;height:38px;border-radius:11px;cursor:pointer;
+    border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    transition:background .25s,border-color .25s;
+  }
+  .menu-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)}
+  .menu-btn:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+  .menu-btn span{display:block;width:16px;height:1.5px;background:var(--ink);border-radius:2px;
+    transition:transform .25s ease,opacity .2s ease}
+  .menu-btn.open span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}
+  .menu-btn.open span:nth-child(2){opacity:0}
+  .menu-btn.open span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+
+  .nav-menu{
+    position:absolute;top:calc(100% + 10px);right:clamp(18px,5vw,56px);z-index:30;
+    min-width:168px;border-radius:14px;padding:7px;
+    border:1px solid rgba(255,255,255,.14);
+    background:linear-gradient(160deg,rgba(24,27,48,.96),rgba(10,12,26,.94));
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    box-shadow:0 24px 50px -20px rgba(0,0,0,.9);
+    display:flex;flex-direction:column;gap:2px;
+    opacity:0;transform:translateY(-8px);pointer-events:none;
+    transition:opacity .22s ease,transform .22s ease;
+  }
+  .nav-menu.open{opacity:1;transform:none;pointer-events:auto}
+  .nav-menu-item{
+    all:unset;box-sizing:border-box;cursor:pointer;width:100%;
+    padding:10px 14px;border-radius:9px;font-size:14px;color:var(--ink-dim);
+    transition:background .2s,color .2s;
+  }
+  .nav-menu-item:hover,.nav-menu-item:focus-visible{background:rgba(255,255,255,.08);color:var(--ink)}
+  .nav-menu-item.active{color:var(--violet)}
+
+  .home-head{margin:0 0 24px}
+  .home-head h2{margin:0 0 6px;font-size:clamp(21px,2.6vw,27px);font-weight:620;letter-spacing:-.025em}
+  .home-head p{margin:0;color:var(--ink-dim);font-size:14px}
+
+  .about-view .lede h1{font-size:clamp(30px,4.6vw,48px)}
+  .about-extra{max-width:52ch;margin-top:22px;display:flex;flex-direction:column;gap:18px;align-items:flex-start}
+  .about-extra p{margin:0;color:var(--ink-dim);font-size:15px;line-height:1.75}
+
   .stage{flex:1;display:flex;flex-direction:column;justify-content:center;
     padding:2vh clamp(10px,3vw,28px) 3vh;
     max-width:1400px;margin:0 auto;width:100%}
@@ -77,6 +122,11 @@
     gap:clamp(28px,5vh,52px);
     opacity:1;transform:translateY(0);
     transition:opacity .38s ease,transform .38s ease;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:1vh 2px 3vh;
+  }
+  @media (max-width:640px){
+    .hero-view{justify-content:flex-start}
   }
   .hero-view.hide{opacity:0;transform:translateY(-10px);pointer-events:none}
 
@@ -199,6 +249,30 @@
   .topic-list.copy-fa{direction:rtl}
   .topic-list.copy-fa li{font-family:var(--fa);font-size:14.5px;line-height:1.9}
 
+  /* ---------- course intro page ---------- */
+  .intro-tag{display:inline-block;font-size:12px;letter-spacing:.02em;color:var(--violet);
+    border:1px solid rgba(169,139,250,.32);border-radius:999px;padding:5px 13px;
+    background:rgba(169,139,250,.09);margin:0 0 18px}
+  .intro-title{margin:0 0 14px;font-size:clamp(25px,4.2vw,36px);font-weight:620;
+    letter-spacing:-.03em;line-height:1.14;
+    background:linear-gradient(135deg,var(--ink),var(--violet) 140%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .intro-desc{margin:0 0 30px;color:var(--ink-dim);font-size:15px;line-height:1.75;
+    max-width:48ch;margin-left:auto;margin-right:auto}
+  .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;text-align:left}
+  .intro-stat{border:1px solid rgba(255,255,255,.1);border-radius:15px;padding:15px 17px;
+    background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.015));
+    transition:border-color .25s,transform .25s}
+  .intro-stat:hover{border-color:rgba(169,139,250,.35);transform:translateY(-2px)}
+  .intro-stat-label{margin:0 0 7px;font-size:10.5px;color:var(--ink-dim);
+    letter-spacing:.07em;text-transform:uppercase}
+  .intro-stat-value{margin:0;font-size:14.5px;color:var(--ink);font-weight:560;line-height:1.4}
+  .intro-stat.wide{grid-column:1 / -1}
+  @media (max-width:520px){
+    .intro-grid{grid-template-columns:1fr}
+    .intro-stat.wide{grid-column:auto}
+  }
+
   /* ---------- flow diagram ---------- */
   .diagram-block{width:100%}
   .diagram-stage{margin:0 0 26px}
@@ -278,19 +352,39 @@
 <div class="page">
   <header class="site-head">
     <div class="brand"><span class="mark"></span><b>Alpha</b><span>Academy</span></div>
-    <div class="head-note">Applied AI, taught by practitioners</div>
+    <div class="head-right">
+      <div class="head-note">Applied AI, taught by practitioners</div>
+      <button class="menu-btn" id="menuBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <nav class="nav-menu" id="navMenu" aria-label="Site">
+      <button class="nav-menu-item active" type="button" data-view="home">Home</button>
+      <button class="nav-menu-item" type="button" data-view="about">About</button>
+    </nav>
   </header>
 
   <main class="stage">
     <div class="view-stack">
 
       <section class="hero-view" id="heroView">
+        <div class="home-head">
+          <h2>Courses</h2>
+          <p>Pick a course to start.</p>
+        </div>
+
+        <div class="card-row" id="cardRow"></div>
+      </section>
+
+      <section class="hero-view about-view hide" id="aboutView">
         <div class="lede">
           <h1>Learn the machine learning that moves markets.</h1>
           <p>Short, dense courses on building AI systems that work with real data — models, pipelines, and the judgment to know when a signal is noise.</p>
         </div>
-
-        <div class="card-row" id="cardRow"></div>
+        <div class="about-extra">
+          <p>AlphaAcademy courses are written by practitioners and broken into short, bilingual lessons (English + فارسی) you can work through at your own pace — no 40-minute video for a 2-minute idea.</p>
+          <button class="nav-btn primary" id="aboutCta" type="button">Browse courses</button>
+        </div>
       </section>
 
       <section class="panel-view" id="panelView">
@@ -423,7 +517,12 @@
 
   const cardRow=document.getElementById('cardRow');
   const heroView=document.getElementById('heroView');
+  const aboutView=document.getElementById('aboutView');
   const panelView=document.getElementById('panelView');
+  const menuBtn=document.getElementById('menuBtn');
+  const navMenu=document.getElementById('navMenu');
+  const navMenuItems=[...navMenu.querySelectorAll('.nav-menu-item')];
+  const aboutCta=document.getElementById('aboutCta');
   const panelTitle=document.getElementById('panelTitle');
   const closeBtn=document.getElementById('closeBtn');
   const backBtn=document.getElementById('backBtn');
@@ -471,31 +570,24 @@
     const slot=el('div','page-slot');
     const inner=el('div','slot-inner');
 
-    inner.appendChild(el('p','lead-line', course.title));
-    inner.appendChild(el('p','copy-en', course.desc));
+    inner.appendChild(el('span','intro-tag', course.tag));
+    inner.appendChild(el('h3','intro-title', course.title));
+    inner.appendChild(el('p','intro-desc', course.desc));
 
-    const ulEn=el('ul','topic-list');
-    buildList(ulEn, [
-      { title:'Lessons', desc:String(lessonCount) },
-      { title:'Level', desc:course.level },
-      { title:'Reference', desc:course.reference },
-      { title:'Format', desc:'Text — EN + فارسی' }
-    ], false);
-    inner.appendChild(ulEn);
-
-    const leadFa=el('p','lead-line copy-fa', course.title);
-    leadFa.style.marginTop='24px';
-    inner.appendChild(leadFa);
-    inner.appendChild(el('p','copy-fa', course.descFa || course.desc));
-
-    const ulFa=el('ul','topic-list');
-    buildList(ulFa, [
-      { title:'درس‌ها', desc:String(lessonCount) },
-      { title:'سطح', desc:course.levelFa || course.level },
-      { title:'منبع', desc:course.referenceFa || course.reference },
-      { title:'فرمت', desc:'متن — انگلیسی + فارسی' }
-    ], true);
-    inner.appendChild(ulFa);
+    const grid=el('div','intro-grid');
+    const stats=[
+      { label:'Lessons', value:String(lessonCount) },
+      { label:'Level', value:course.level },
+      { label:'Format', value:'Text · EN + FA' },
+      { label:'Reference', value:course.reference, wide:true }
+    ];
+    stats.forEach(st=>{
+      const card=el('div','intro-stat'+(st.wide?' wide':''));
+      card.appendChild(el('p','intro-stat-label', st.label));
+      card.appendChild(el('p','intro-stat-value', st.value));
+      grid.appendChild(card);
+    });
+    inner.appendChild(grid);
 
     slot.appendChild(inner);
     return slot;
@@ -582,11 +674,15 @@
   }
 
   // ---- panel navigation state (shared across courses; reset on each open) ----
-  let n=0, idx=0;
+  let n=0, idx=0, hasIntro=false;
 
   function renderTrack(){
     track.style.transform='translateX(-'+(idx*(n?100/n:0))+'%)';
-    pageCounter.textContent=(idx+1)+'/'+n;
+    if(hasIntro){
+      pageCounter.textContent = idx===0 ? 'Intro' : idx+'/'+(n-1);
+    } else {
+      pageCounter.textContent=(idx+1)+'/'+n;
+    }
     backBtn.disabled = idx===0;
     nextBtn.disabled = idx===n-1;
   }
@@ -605,7 +701,7 @@
     loadingInner.appendChild(el('p','copy-en','Loading…'));
     loading.appendChild(loadingInner);
     track.appendChild(loading);
-    n=1; idx=0; renderTrack();
+    n=1; idx=0; hasIntro=false; renderTrack();
 
     heroView.classList.add('hide');
     panelView.classList.add('show');
@@ -616,8 +712,10 @@
       track.innerHTML='';
       let slots;
       if(result.lessons){
+        hasIntro=true;
         slots=[buildIntroSlot(course, result.lessons.length), ...result.lessons.map(buildSlot)];
       } else {
+        hasIntro=false;
         const warn=el('div','page-slot');
         const inner=el('div','slot-inner');
         inner.appendChild(el('p','copy-en', diagnosticMessage(result, course.file)));
@@ -640,6 +738,54 @@
       activeCard.focus();
     }
   }
+
+  function setActiveNav(view){
+    navMenuItems.forEach(btn=> btn.classList.toggle('active', btn.dataset.view===view));
+  }
+
+  function closeMenu(){
+    navMenu.classList.remove('open');
+    menuBtn.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded','false');
+  }
+  function toggleMenu(){
+    const open=navMenu.classList.toggle('open');
+    menuBtn.classList.toggle('open', open);
+    menuBtn.setAttribute('aria-expanded', open?'true':'false');
+  }
+
+  function showHome(){
+    if(panelView.classList.contains('show')){
+      panelView.classList.remove('show');
+      if(activeCard){ activeCard.setAttribute('aria-expanded','false'); activeCard=null; }
+    }
+    aboutView.classList.add('hide');
+    heroView.classList.remove('hide');
+    setActiveNav('home');
+  }
+  function showAbout(){
+    if(panelView.classList.contains('show')){
+      panelView.classList.remove('show');
+      if(activeCard){ activeCard.setAttribute('aria-expanded','false'); activeCard=null; }
+    }
+    heroView.classList.add('hide');
+    aboutView.classList.remove('hide');
+    setActiveNav('about');
+  }
+
+  menuBtn.addEventListener('click', e=>{ e.stopPropagation(); toggleMenu(); });
+  navMenuItems.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      closeMenu();
+      if(btn.dataset.view==='about') showAbout(); else showHome();
+    });
+  });
+  aboutCta.addEventListener('click', ()=>{ showHome(); });
+  document.addEventListener('click', e=>{
+    if(navMenu.classList.contains('open') && !navMenu.contains(e.target) && !menuBtn.contains(e.target)){
+      closeMenu();
+    }
+  });
 
   function buildCard(course){
     const card=el('button','course');
@@ -687,6 +833,7 @@
 
   closeBtn.addEventListener('click',closePanel);
   document.addEventListener('keydown',e=>{
+    if(e.key==='Escape' && navMenu.classList.contains('open')) closeMenu();
     if(!panelView.classList.contains('show')) return;
     if(e.key==='Escape') closePanel();
     if(e.key==='ArrowRight') goNext();
